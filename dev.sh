@@ -3,6 +3,27 @@
 # Base directory for projects
 BASE_DIR="$HOME/Projects"
 
+# File to store last run's arguments
+LAST_ARGS_FILE="./.dev_last_args"
+
+# If no arguments are provided, try to use the last run's args.
+if [ $# -eq 0 ]; then
+    if [ -f "$LAST_ARGS_FILE" ]; then
+        read -r last_args < "$LAST_ARGS_FILE"
+        echo "No arguments provided. Using last run's inputs: $last_args"
+        # Reset positional parameters with the stored arguments.
+        # Note: This works reliably if there are no spaces within the arguments.
+        set -- $last_args
+    else
+        echo "No previous inputs stored and no arguments supplied."
+        echo "Usage: $0 [-s|--session session_name] project1 [project2]"
+        exit 1
+    fi
+else
+    # Save the arguments for future runs.
+    echo "$*" > "$LAST_ARGS_FILE"
+fi
+
 # Set the Array for Project/s
 PROJECTS=()
 
